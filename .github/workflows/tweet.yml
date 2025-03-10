@@ -1,0 +1,30 @@
+name: Twitter Auto Post
+
+on:
+  schedule:
+    - cron: "0 3 * * *"  # 日本時間 7:00（UTC 3:00）
+
+jobs:
+  tweet:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: リポジトリを取得
+        uses: actions/checkout@v3
+
+      - name: Python をセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: 依存関係をインストール
+        run: pip install tweepy google-generativeai
+
+      - name: Twitter にツイート
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python twitter_bot.py
