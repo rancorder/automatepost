@@ -1,1 +1,1 @@
-# automatepost
+# twitter-auto-post
