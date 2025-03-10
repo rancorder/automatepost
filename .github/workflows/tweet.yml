@@ -2,7 +2,8 @@ name: Twitter Auto Post
 
 on:
   schedule:
-    - cron: "0 3 * * *"  # 日本時間 7:00（UTC 3:00）
+    - cron: "0 3 * * *"  # 日本時間 12:00（UTC 3:00）
+  workflow_dispatch:  # これを追加すると手動実行ボタンが表示される
 
 jobs:
   tweet:
