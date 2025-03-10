@@ -20,17 +20,25 @@ jobs:
 
       - name: 必要なライブラリをインストール
         run: |
+          python --version
           pip install --upgrade pip
           pip install tweepy google-generativeai requests
 
-      - name: 現在のディレクトリを確認（デバッグ用）
+      - name: 現在のディレクトリとファイル一覧を確認（デバッグ）
         run: |
+          echo "📌 現在のディレクトリ:"
           pwd
+          echo "📌 ファイル一覧:"
           ls -la
 
-      - name: `app.py` の存在を確認（デバッグ）
+      - name: "app.py の存在を確認（デバッグ）"
         run: |
-          if [ -f app.py ]; then echo "✅ app.py found"; else echo "❌ app.py NOT found"; exit 1; fi
+          if [ -f app.py ]; then
+            echo "✅ app.py found"
+          else
+            echo "❌ app.py NOT found. ワークフローを停止します。"
+            exit 1
+          fi
 
       - name: Twitter にツイート
         env:
@@ -39,4 +47,9 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python app.py
+        run: |
+          if [ -z "$API_KEY" ] || [ -z "$API_SECRET" ] || [ -z "$ACCESS_TOKEN" ] || [ -z "$ACCESS_SECRET" ] || [ -z "$GEMINI_API_KEY" ]; then
+            echo "❌ 環境変数が不足しています。Secrets を確認してください。"
+            exit 1
+          fi
+          python app.py
