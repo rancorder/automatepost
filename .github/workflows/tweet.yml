@@ -26,6 +26,9 @@ jobs:
       - name: 現在のディレクトリを確認（デバッグ用）
         run: pwd && ls -la
 
+      - name: `app.py` の存在を確認（デバッグ）
+        run: test -f app.py && echo "✅ app.py found" || echo "❌ app.py NOT found"
+
       - name: Twitter にツイート
         env:
           API_KEY: ${{ secrets.API_KEY }}
@@ -33,4 +36,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python ./app.py  # ✅ 修正: app.py を実行
+        run: python app.py
