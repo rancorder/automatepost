@@ -24,10 +24,13 @@ jobs:
           pip install tweepy google-generativeai requests
 
       - name: 現在のディレクトリを確認（デバッグ用）
-        run: pwd && ls -la
+        run: |
+          pwd
+          ls -la
 
       - name: `app.py` の存在を確認（デバッグ）
-        run: test -f app.py && echo "✅ app.py found" || echo "❌ app.py NOT found"
+        run: |
+          test -f app.py && echo "✅ app.py found" || echo "❌ app.py NOT found"
 
       - name: Twitter にツイート
         env:
