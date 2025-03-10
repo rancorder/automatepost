@@ -3,7 +3,7 @@ name: Twitter Auto Post
 on:
   schedule:
     - cron: "0 3 * * *"  # 日本時間 12:00（UTC 3:00）
-  workflow_dispatch:  # これを追加すると手動実行ボタンが表示される
+  workflow_dispatch:
 
 jobs:
   tweet:
@@ -18,8 +18,13 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: 依存関係をインストール
-        run: pip install tweepy google-generativeai
+      - name: 必要なライブラリをインストール
+        run: |
+          pip install --upgrade pip
+          pip install tweepy google-generativeai requests
+
+      - name: 現在のディレクトリを確認（デバッグ用）
+        run: pwd && ls -la
 
       - name: Twitter にツイート
         env:
@@ -28,4 +33,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python twitter_bot.py
+        run: python ./app.py  # ✅ 修正: app.py を指定
