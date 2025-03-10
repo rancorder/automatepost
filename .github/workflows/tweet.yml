@@ -30,7 +30,7 @@ jobs:
 
       - name: `app.py` の存在を確認（デバッグ）
         run: |
-          test -f app.py && echo "✅ app.py found" || echo "❌ app.py NOT found"
+          if [ -f app.py ]; then echo "✅ app.py found"; else echo "❌ app.py NOT found"; exit 1; fi
 
       - name: Twitter にツイート
         env:
