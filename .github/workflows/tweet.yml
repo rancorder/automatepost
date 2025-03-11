@@ -10,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 実行時間を記録（デバッグ用）
-        run: date "+%Y-%m-%d %H:%M:%S %Z"
+      - name: 実行時間を記録（デバッグ用、JST で表示）
+        run: |
+          export TZ=Asia/Tokyo
+          echo "📅 GitHub Actions の実行時間（JST）: $(date '+%Y-%m-%d %H:%M:%S %Z')"
 
       - name: リポジトリを取得
         uses: actions/checkout@v3
@@ -61,11 +63,18 @@ jobs:
             echo "✅ 環境変数は正しく設定されています。"
           fi
 
-      - name: Twitter にツイート
+      - name: JST の日付を取得（環境変数に設定）
+        run: |
+          export TZ=Asia/Tokyo
+          TODAY=$(date '+%Y-%m-%d')
+          echo "📅 今日の日付（JST）: $TODAY"
+          echo "TODAY=$TODAY" >> $GITHUB_ENV  # 環境変数にセット
+
+      - name: Twitter にツイート（JST の当日の日付を渡す）
         env:
           API_KEY: ${{ secrets.API_KEY }}
           API_SECRET: ${{ secrets.API_SECRET }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python app.py
+        run: python app.py "$TODAY"
