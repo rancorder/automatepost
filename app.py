@@ -128,7 +128,7 @@ def generate_fortune():
 # 🚀 ツイートを投稿
 def post_fortune():
     fortune_text, theme = generate_fortune()
-    tweet_text = f"🔮 {today}のメッセージ 🔮\n{fortune_text}\n#占い #運勢 #自己成長"
+    tweet_text = f"\n{fortune_text}\n#占い #運勢 #自己成長"
 
     try:
         response = client.create_tweet(text=tweet_text)
