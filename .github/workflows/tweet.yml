@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 実行時間を記録（デバッグ用、JST で表示）
+      - name: 実行時間を記録（デバッグ用）
         run: |
           export TZ=Asia/Tokyo
-          echo "📅 GitHub Actions の実行時間（JST）: $(date '+%Y-%m-%d %H:%M:%S %Z')"
+          date "+%Y-%m-%d %H:%M:%S %Z"
 
       - name: リポジトリを取得
         uses: actions/checkout@v3
@@ -25,21 +25,10 @@ jobs:
 
       - name: 必要なライブラリをインストール
         run: |
-          echo "📌 Python バージョン:"
-          python --version
-          echo "📌 pip アップグレード"
           pip install --upgrade pip
-          echo "📌 必要なライブラリをインストール"
           pip install tweepy google-generativeai requests
 
-      - name: 現在のディレクトリとファイル一覧を確認（デバッグ）
-        run: |
-          echo "📌 現在のディレクトリ:"
-          pwd
-          echo "📌 ファイル一覧:"
-          ls -la
-
-      - name: "app.py の存在を確認（デバッグ）"
+      - name: "app.py の存在を確認"
         run: |
           if [ -f app.py ]; then
             echo "✅ app.py found"
@@ -59,22 +48,17 @@ jobs:
           if [ -z "$API_KEY" ] || [ -z "$API_SECRET" ] || [ -z "$ACCESS_TOKEN" ] || [ -z "$ACCESS_SECRET" ] || [ -z "$GEMINI_API_KEY" ]; then
             echo "❌ 環境変数が不足しています。Secrets を確認してください。"
             exit 1
-          else
-            echo "✅ 環境変数は正しく設定されています。"
           fi
 
-      - name: JST の日付を取得（環境変数に設定）
-        run: |
-          export TZ=Asia/Tokyo
-          TODAY=$(date '+%Y-%m-%d')
-          echo "📅 今日の日付（JST）: $TODAY"
-          echo "TODAY=$TODAY" >> $GITHUB_ENV  # 環境変数にセット
-
-      - name: Twitter にツイート（JST の当日の日付を渡す）
+      - name: Twitter にツイート（当日の日本時間の日付を使用）
         env:
           API_KEY: ${{ secrets.API_KEY }}
           API_SECRET: ${{ secrets.API_SECRET }}
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           ACCESS_SECRET: ${{ secrets.ACCESS_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python app.py "$TODAY"
+        run: |
+          export TZ=Asia/Tokyo
+          TODAY=$(date '+%Y-%m-%d')
+          echo "📅 今日の日付: $TODAY"
+          python app.py "$TODAY"
