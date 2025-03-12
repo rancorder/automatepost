@@ -2,7 +2,6 @@ import os
 import tweepy
 import google.generativeai as genai
 from datetime import datetime, timezone, timedelta
-import random
 
 # ✅ 環境変数から API キーを取得
 # X API
@@ -35,24 +34,30 @@ try:
 except Exception as e:
     raise RuntimeError(f"❌ Gemini API 接続エラー: {e}")
 
-# 📅 日本時間（JST）での今日の日付を取得
+# 📅 日本時間（JST）での今日の曜日を取得
 jst_now = datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=9)))
-today = jst_now.strftime("%Y年%m月%d日")
+today_date = jst_now.strftime("%Y年%m月%d日")
+today_weekday = jst_now.strftime("%A")  # 'Monday', 'Tuesday' など
 
-# 🔮 今日の運勢TOP5の生まれ月を選定
-def get_top5_birth_months():
-    months = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
-    return random.sample(months, 5)  # ランダムに5つ選択
+# 🔮 曜日ごとのテーマ
+topics = {
+    "Monday": "週のスタート時に運気を上げる方法",
+    "Tuesday": "ナイトルーティンと開運の関係",
+    "Wednesday": "夢占いの歴史と直感力の関係",
+    "Thursday": "拡散されやすい運勢診断の統計的根拠",
+    "Friday": "選択式占いと心理学の関連性",
+    "Saturday": "週末のリフレッシュが運勢に与える影響",
+    "Sunday": "週間占いの根拠と歴史"
+}
 
-# 🔮 Geminiで占いメッセージを生成（140字以内）
+# 🔮 Geminiでツイートを生成（140字以内）
 def generate_fortune():
-    top5_months = get_top5_birth_months()
-    month_str = "・".join(top5_months)
+    topic = topics.get(today_weekday, "占いの歴史")  # 曜日に対応するテーマを取得
 
     prompt = f"""
-    {today}の運勢ランキングTOP5🎉
-    今日特に運勢が良い生まれ月は {month_str} 生まれのあなた！🌟
-    運気を活かすヒントも添えて、140文字以内でまとめてください。
+    {today_date} の {today_weekday} の占いツイートです。
+    テーマ: {topic}
+    140文字以内のTwitter投稿として適切な形式で文章を作成してください。
     """
 
     try:
@@ -73,12 +78,12 @@ def generate_fortune():
         return fortune_text
 
     except Exception as e:
-        raise RuntimeError(f"❌ Gemini API でエラー発生: {e}")
+        return f"⚠️ Gemini API エラー: {e}"
 
 # 🚀 ツイートを投稿
 def post_fortune():
     fortune_text = generate_fortune()
-    tweet_text = f"🔮 {today}の運勢 🔮\n{fortune_text}\n#AI占い #今日の運勢 #未来の羅針盤"
+    tweet_text = f"🔮 {today_date} ({today_weekday}) の運勢 🔮\n{fortune_text}\n#AI占い #今日の運勢 #未来の羅針盤"
 
     try:
         response = client.create_tweet(text=tweet_text)
