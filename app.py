@@ -43,12 +43,12 @@ today = jst_now.strftime("%Y年%m月%d日")
 # 📌 ポスト履歴を管理するファイル
 HISTORY_FILE = "tweet_history.json"
 
-# 🔍 過去の投稿履歴を読み込む
+# 🔍 過去の投稿履歴を読み込む（IndentationError 修正済み）
 def load_history():
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, "r", encoding="utf-8") as file:
-        return json.load(file)
-    return {"posts": []}
+            return json.load(file)
+    return {"posts": []}  # 正しくインデントを修正
 
 # 💾 新しい投稿を履歴に追加
 def save_history(post_text):
